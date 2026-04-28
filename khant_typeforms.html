@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emily BTP — Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:    #00A884;
+  --green-dk: #008f70;
+  --green-lt: #e8f7f2;
+  --green-mid:#00cf9d;
+  --ink:      #1e5a40;
+  --paper:    #f4fbf8;
+  --sand:     #d6ede6;
+  --mist:     #4a7a6a;
+  --white:    #ffffff;
+  --radius:   4px;
+  --error:    #e53935;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  min-height:100vh;
+  font-size:16px;
+  line-height:1.6;
+}
+
+/* ── TABS ── */
+.tabs{
+  position:sticky;top:0;z-index:100;
+  background:var(--white);
+  border-bottom:1px solid var(--sand);
+  display:flex;
+}
+.tab-btn{
+  flex:1;padding:16px 8px;
+  border:none;background:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  font-size:.82rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:var(--mist);
+  border-bottom:2px solid transparent;
+  transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green);}
+.tab-btn .tab-icon{font-size:1rem;}
+
+/* ── FORM WRAPPER ── */
+.form-page{display:none;}
+.form-page.active{display:block;}
+
+/* ── FORM HEADER ── */
+.form-header{
+  background:var(--green);
+  padding:40px 0 32px;
+  color:var(--white);
+}
+.form-header .wrap{max-width:680px;margin:0 auto;padding:0 24px;}
+.form-eyebrow{
+  font-size:.75rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:rgba(255,255,255,.65);
+  margin-bottom:10px;
+}
+.form-header h1{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(1.8rem,4vw,2.8rem);
+  color:var(--white);
+  line-height:1.1;
+  margin-bottom:10px;
+}
+.form-header h1 em{font-style:italic;color:rgba(255,255,255,.8);}
+.form-header p{font-size:.95rem;color:rgba(255,255,255,.75);max-width:500px;}
+
+/* ── PROGRESS ── */
+.progress-bar{
+  background:rgba(255,255,255,.2);
+  height:3px;margin-top:24px;
+  border-radius:2px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;background:var(--white);
+  border-radius:2px;
+  transition:width .4s ease;
+}
+.progress-label{
+  display:flex;justify-content:space-between;
+  font-size:.75rem;color:rgba(255,255,255,.6);
+  margin-top:8px;
+}
+
+/* ── STEPS ── */
+.steps-wrap{max-width:680px;margin:0 auto;padding:0 24px 60px;}
+
+.step{display:none;padding-top:40px;}
+.step.active{display:block;}
+
+.step-num{
+  font-size:.75rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.13em;
+  color:var(--green);margin-bottom:10px;
+}
+.step h2{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(1.4rem,3vw,2rem);
+  margin-bottom:6px;line-height:1.15;
+}
+.step-hint{font-size:.88rem;color:var(--mist);margin-bottom:28px;}
+
+/* ── MAPPING BADGE ── */
+.q-mapping{
+  display:inline-block;
+  font-size:.72rem;
+  color:var(--mist);
+  background:var(--sand);
+  border-radius:2px;
+  padding:2px 7px;
+  font-family:'Courier New',monospace;
+  letter-spacing:.02em;
+  margin-bottom:20px;
+}
+
+/* ── FIELD ROW ── */
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.field-row.cols-3{grid-template-columns:1fr 1fr 1fr;}
+@media(max-width:540px){
+  .field-row,.field-row.cols-3{grid-template-columns:1fr;}
+}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+.field label{
+  font-size:.82rem;font-weight:600;
+  color:var(--ink);letter-spacing:.01em;
+}
+.field label .req{color:var(--green);}
+
+/* ── INPUTS ── */
+input[type=text],input[type=email],input[type=tel],
+input[type=number],input[type=date],textarea,select{
+  width:100%;
+  font-family:'DM Sans',sans-serif;
+  font-size:.95rem;
+  color:var(--ink);
+  background:var(--white);
+  border:1.5px solid var(--sand);
+  border-radius:var(--radius);
+  padding:13px 14px;
+  outline:none;
+  transition:border-color .2s;
+  -webkit-appearance:none;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--green);}
+input.err,textarea.err,select.err{border-color:var(--error);}
+textarea{resize:vertical;min-height:90px;}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%234a7a6a'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:36px;
+}
+
+/* ── SEPARATEUR SECTION ── */
+.sep{
+  font-size:.75rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.12em;
+  color:var(--mist);
+  border-top:1px solid var(--sand);
+  padding-top:20px;margin:24px 0 20px;
+}
+
+/* ── CHOICE BUTTONS ── */
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choices.cols-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.choices.cols-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+@media(max-width:540px){
+  .choices.cols-2,.choices.cols-3{grid-template-columns:1fr;}
+}
+.choice-btn{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:16px 18px;
+  border:1.5px solid var(--sand);
+  border-radius:var(--radius);
+  background:var(--white);
+  cursor:pointer;
+  transition:all .2s;
+  text-align:left;
+}
+.choice-btn:hover{border-color:var(--green);background:var(--green-lt);}
+.choice-btn.selected{
+  border-color:var(--green);
+  background:var(--green-lt);
+}
+.choice-btn.selected .choice-check{
+  background:var(--green);border-color:var(--green);
+}
+.choice-btn.selected .choice-check::after{opacity:1;}
+.choice-check{
+  width:20px;height:20px;
+  border:1.5px solid var(--sand);
+  border-radius:50%;
+  flex-shrink:0;margin-top:2px;
+  transition:all .2s;position:relative;
+}
+.choice-check::after{
+  content:'';position:absolute;
+  top:3px;left:3px;
+  width:12px;height:12px;
+  border-radius:50%;
+  background:var(--white);
+  opacity:0;transition:opacity .2s;
+}
+.choice-label{font-weight:600;font-size:.9rem;color:var(--ink);}
+.choice-desc{font-size:.8rem;color:var(--mist);margin-top:2px;}
+
+/* ── TOGGLE DAYS ── */
+.day-toggles{display:flex;gap:8px;flex-wrap:wrap;}
+.day-btn{
+  width:46px;height:46px;
+  border:1.5px solid var(--sand);
+  border-radius:var(--radius);
+  background:var(--white);
+  font-family:'DM Sans',sans-serif;
+  font-size:.8rem;font-weight:600;
+  color:var(--mist);cursor:pointer;
+  transition:all .2s;
+}
+.day-btn.on{
+  background:var(--green);
+  border-color:var(--green);
+  color:var(--white);
+}
+
+/* ── TIMESLOTS ── */
+.timeslots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+@media(max-width:540px){.timeslots{grid-template-columns:repeat(2,1fr);}}
+.slot-btn{
+  padding:10px 8px;
+  border:1.5px solid var(--sand);
+  border-radius:var(--radius);
+  background:var(--white);
+  font-family:'DM Sans',sans-serif;
+  font-size:.8rem;font-weight:500;
+  color:var(--mist);cursor:pointer;
+  transition:all .2s;text-align:center;
+}
+.slot-btn.on{
+  background:var(--green);
+  border-color:var(--green);
+  color:var(--white);font-weight:600;
+}
+
+/* ── URGENCE CARDS ── */
+.urgence-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:540px){.urgence-choices{grid-template-columns:1fr;}}
+.urgence-card{
+  padding:20px;
+  border:1.5px solid var(--sand);
+  border-radius:var(--radius);
+  background:var(--white);
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+}
+.urgence-card:hover{border-color:var(--green);background:var(--green-lt);}
+.urgence-card.selected{border-color:var(--green);background:var(--green-lt);}
+.urgence-card.urgent.selected{border-color:#e53935;background:#fff5f5;}
+.urgence-icon{font-size:1.5rem;margin-bottom:8px;}
+.urgence-title{font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:4px;}
+.urgence-desc{font-size:.8rem;color:var(--mist);}
+
+/* ── ALERTE URGENCE ── */
+.alert-urgence{
+  display:none;
+  background:#fff5f5;
+  border:1.5px solid #e53935;
+  border-radius:var(--radius);
+  padding:14px 16px;
+  margin-top:16px;
+  font-size:.88rem;
+  color:#c62828;
+  font-weight:500;
+}
+.alert-urgence.show{display:block;}
+
+/* ── CHANTIER GRID ── */
+.chantier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:540px){.chantier-grid{grid-template-columns:1fr 1fr;}}
+.chantier-btn{
+  padding:16px 12px;
+  border:1.5px solid var(--sand);
+  border-radius:var(--radius);
+  background:var(--white);
+  cursor:pointer;
+  transition:all .2s;
+  text-align:center;
+}
+.chantier-btn:hover{border-color:var(--green);background:var(--green-lt);}
+.chantier-btn.selected{border-color:var(--green);background:var(--green-lt);}
+.chantier-icon{font-size:1.4rem;margin-bottom:6px;display:block;}
+.chantier-name{font-size:.82rem;font-weight:600;color:var(--ink);display:block;}
+.chantier-sub{font-size:.72rem;color:var(--mist);display:block;margin-top:2px;}
+
+/* ── BLOC CONDITIONNEL ── */
+.conditional-bloc{display:none;}
+.conditional-bloc.show{display:block;}
+
+/* ── MULTI-SELECT ── */
+.multi-select{display:flex;flex-wrap:wrap;gap:8px;}
+.ms-btn{
+  padding:8px 14px;
+  border:1.5px solid var(--sand);
+  border-radius:20px;
+  background:var(--white);
+  font-family:'DM Sans',sans-serif;
+  font-size:.82rem;font-weight:500;
+  color:var(--mist);cursor:pointer;
+  transition:all .2s;
+}
+.ms-btn.on{
+  background:var(--green);
+  border-color:var(--green);
+  color:var(--white);font-weight:600;
+}
+
+/* ── PÉRIODES CONGÉS ── */
+.periode-row{
+  display:grid;grid-template-columns:1fr 1fr auto;
+  gap:10px;align-items:end;margin-bottom:10px;
+}
+.btn-add-periode{
+  background:none;
+  border:1.5px dashed var(--sand);
+  border-radius:var(--radius);
+  padding:12px;
+  font-family:'DM Sans',sans-serif;
+  font-size:.85rem;color:var(--mist);
+  cursor:pointer;width:100%;
+  transition:all .2s;margin-top:8px;
+}
+.btn-add-periode:hover{border-color:var(--green);color:var(--green);}
+
+/* ── NAV BUTTONS ── */
+.step-nav{
+  display:flex;justify-content:space-between;
+  align-items:center;
+  margin-top:36px;
+  padding-top:24px;
+  border-top:1px solid var(--sand);
+}
+.btn-prev{
+  background:none;
+  border:1.5px solid var(--sand);
+  border-radius:var(--radius);
+  padding:13px 24px;
+  font-family:'DM Sans',sans-serif;
+  font-size:.9rem;font-weight:600;
+  color:var(--mist);cursor:pointer;
+  transition:all .2s;
+}
+.btn-prev:hover{border-color:var(--ink);color:var(--ink);}
+.btn-next{
+  background:var(--green);
+  border:none;border-radius:var(--radius);
+  padding:14px 32px;
+  font-family:'DM Sans',sans-serif;
+  font-size:.9rem;font-weight:600;
+  color:var(--white);cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;gap:8px;
+}
+.btn-next:hover{background:var(--green-dk);transform:translateY(-1px);}
+.btn-next:disabled{background:var(--sand);cursor:not-allowed;transform:none;}
+
+/* ── SUCCESS SCREEN ── */
+.success-screen{
+  display:none;
+  text-align:center;
+  padding:60px 24px;
+  max-width:480px;margin:0 auto;
+}
+.success-screen.show{display:block;}
+.success-icon{
+  width:72px;height:72px;
+  background:var(--green);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;
+}
+.success-icon svg{width:36px;}
+.success-screen h2{
+  font-family:'DM Serif Display',serif;
+  font-size:2rem;margin-bottom:12px;
+}
+.success-screen p{font-size:1rem;color:var(--mist);line-height:1.7;margin-bottom:20px;}
+.success-id{
+  display:inline-block;
+  font-family:'Courier New',monospace;
+  font-size:1.1rem;font-weight:700;
+  color:var(--green);
+  background:var(--green-lt);
+  padding:10px 20px;border-radius:var(--radius);
+  margin-bottom:28px;letter-spacing:.05em;
+}
+.success-wa{
+  background:var(--green);color:var(--white);
+  border:none;border-radius:var(--radius);
+  padding:15px 28px;
+  font-family:'DM Sans',sans-serif;
+  font-size:.95rem;font-weight:600;
+  cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;
+  text-decoration:none;transition:background .2s;
+}
+.success-wa:hover{background:var(--green-dk);}
+
+/* ── ERROR MSG ── */
+.err-msg{font-size:.76rem;color:var(--error);margin-top:4px;display:none;}
+.err-msg.show{display:block;}
+</style>
+</head>
+<body>
+
+<!-- ══ TABS ══ -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('client')">
+    <span class="tab-icon">👤</span> Client
+  </button>
+  <button class="tab-btn" onclick="switchTab('ops')">
+    <span class="tab-icon">👷</span> Opérationnel
+  </button>
+  <button class="tab-btn" onclick="switchTab('projet')">
+    <span class="tab-icon">🏗️</span> Projet
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════
+     TYPEFORM 1 — CLIENT
+     ══════════════════════════════════════ -->
+<div class="form-page active" id="page-client">
+  <div class="form-header">
+    <div class="wrap">
+      <div class="form-eyebrow">Nouveau client</div>
+      <h1>Enregistrement <em>client</em></h1>
+      <p>Renseigne les informations du client pour créer sa fiche dans Airtable Prospects.</p>
+      <div class="progress-bar"><div class="progress-fill" id="prog-client" style="width:33%"></div></div>
+      <div class="progress-label"><span id="step-label-client">Étape 1 / 3</span><span id="step-name-client">Type de client</span></div>
+    </div>
+  </div>
+
+  <div class="steps-wrap">
+
+    <!-- STEP C1 -->
+    <div class="step active" id="c-step-1">
+      <div class="step-num">01</div>
+      <h2>Quel type de client ?</h2>
+      <p class="step-hint">Détermine les champs TVA et SIRET affichés ensuite.</p>
+      <span class="q-mapping">Prospects.Type</span>
+      <div class="choices" style="margin-top:8px;">
+        <button class="choice-btn" onclick="selectChoice(this,'client-type','Particulier')" data-val="Particulier">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">🏠 Particulier</div><div class="choice-desc">Propriétaire, locataire avec accord</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectChoice(this,'client-type','Entreprise')" data-val="Entreprise">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">🏢 Entreprise</div><div class="choice-desc">Société, SCI, SAS, SARL…</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectChoice(this,'client-type','Collectivité')" data-val="Collectivité">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">🏛️ Collectivité</div><div class="choice-desc">Mairie, bailleur social, syndic</div></div>
+        </button>
+      </div>
+      <div class="step-nav">
+        <span></span>
+        <button class="btn-next" onclick="clientNext(1)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP C2 -->
+    <div class="step" id="c-step-2">
+      <div class="step-num">02</div>
+      <h2>Identité du client</h2>
+      <p class="step-hint" id="c2-hint">Renseignez les coordonnées complètes.</p>
+
+      <!-- Particulier -->
+      <div id="bloc-particulier">
+        <div class="field-row">
+          <div class="field"><label>Prénom <span class="req">*</span></label><input type="text" id="c-prenom" placeholder="Jean"></div>
+          <div class="field"><label>Nom <span class="req">*</span></label><input type="text" id="c-nom" placeholder="Dupont"></div>
+        </div>
+        <div class="field"><label>Adresse complète <span class="req">*</span></label><textarea id="c-adresse-p" placeholder="12 rue de la Paix, 75001 Paris"></textarea></div>
+        <div class="field-row">
+          <div class="field"><label>Téléphone <span class="req">*</span></label><input type="tel" id="c-tel-p" placeholder="+33 6 12 34 56 78"></div>
+          <div class="field"><label>Email</label><input type="email" id="c-email-p" placeholder="jean@exemple.fr"></div>
+        </div>
+      </div>
+
+      <!-- Entreprise / Collectivité -->
+      <div id="bloc-entreprise" style="display:none;">
+        <div class="field"><label>Dénomination <span class="req">*</span></label><input type="text" id="c-denom" placeholder="SCI Les Pins"></div>
+        <div class="field-row">
+          <div class="field"><label>Contact principal <span class="req">*</span></label><input type="text" id="c-contact1" placeholder="Marie Lambert"></div>
+          <div class="field"><label>Second contact</label><input type="text" id="c-contact2" placeholder="Pierre Martin"></div>
+        </div>
+        <div class="field"><label>Adresse complète <span class="req">*</span></label><textarea id="c-adresse-e" placeholder="12 rue de la Paix, 75001 Paris"></textarea></div>
+        <div class="field-row">
+          <div class="field"><label>Téléphone <span class="req">*</span></label><input type="tel" id="c-tel-e" placeholder="+33 1 23 45 67 89"></div>
+          <div class="field"><label>Email</label><input type="email" id="c-email-e" placeholder="contact@entreprise.fr"></div>
+        </div>
+        <div class="sep">Informations fiscales</div>
+        <div id="bloc-fiscal">
+          <div class="field-row">
+            <div class="field"><label>TVA intracommunautaire <span class="req">*</span></label><input type="text" id="c-tva" placeholder="FR12345678900"></div>
+            <div class="field"><label>SIRET</label><input type="text" id="c-siret" placeholder="12345678900019"></div>
+          </div>
+          <div class="field"><label>IBAN</label><input type="text" id="c-iban" placeholder="FR76 1234 5678 9012 3456 7890 123"></div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-prev" onclick="clientGo(1)">← Retour</button>
+        <button class="btn-next" onclick="clientNext(2)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP C3 -->
+    <div class="step" id="c-step-3">
+      <div class="step-num">03</div>
+      <h2>Contexte & projet</h2>
+      <p class="step-hint">Ces informations sont enregistrées dans les notes Emily.</p>
+      <span class="q-mapping">Prospects.Notes_Emily</span>
+
+      <div class="field" style="margin-top:12px;">
+        <label>Description du projet</label>
+        <textarea id="c-desc" placeholder="Ex : Rénovation salle de bain 8m², robinetterie à changer…"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Budget estimé</label>
+          <select id="c-budget">
+            <option value="">— Sélectionner —</option>
+            <option>Moins de 5 000 €</option>
+            <option>5 000 – 15 000 €</option>
+            <option>15 000 – 30 000 €</option>
+            <option>30 000 – 60 000 €</option>
+            <option>Plus de 60 000 €</option>
+            <option>À définir avec devis</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Délai souhaité</label>
+          <select id="c-delai">
+            <option value="">— Sélectionner —</option>
+            <option>Urgent — moins de 2 semaines</option>
+            <option>1 à 3 mois</option>
+            <option>3 à 6 mois</option>
+            <option>Plus de 6 mois</option>
+            <option>Pas de contrainte</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Comment a-t-il entendu parler de nous ?</label>
+        <select id="c-source">
+          <option value="">— Sélectionner —</option>
+          <option>Bouche à oreille</option>
+          <option>Google</option>
+          <option>Leboncoin / Pages Jaunes</option>
+          <option>Client fidèle</option>
+          <option>Réseaux sociaux</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="step-nav">
+        <button class="btn-prev" onclick="clientGo(2)">← Retour</button>
+        <button class="btn-next" onclick="submitClient()">Enregistrer le client ✓</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS CLIENT -->
+    <div class="success-screen" id="success-client">
+      <div class="success-icon"><svg viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+      <h2>Client enregistré !</h2>
+      <p>La fiche a été créée dans Airtable Prospects.</p>
+      <div class="success-id" id="client-id-display">CLI-042026-001</div>
+      <p style="font-size:.85rem;color:var(--mist);margin-bottom:28px;">Envoyez "Bonjour" à Emily pour démarrer.</p>
+      <a href="https://wa.me/14155238886?text=Bonjour+Emily" class="success-wa" target="_blank">
+        <svg viewBox="0 0 24 24" fill="white" width="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+        Ouvrir WhatsApp Emily
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TYPEFORM 2 — OPÉRATIONNEL
+     ══════════════════════════════════════ -->
+<div class="form-page" id="page-ops">
+  <div class="form-header">
+    <div class="wrap">
+      <div class="form-eyebrow">Nouvel employé</div>
+      <h1>Fiche <em>opérationnelle</em></h1>
+      <p>Crée la fiche employé dans Airtable Equipe.</p>
+      <div class="progress-bar"><div class="progress-fill" id="prog-ops" style="width:25%"></div></div>
+      <div class="progress-label"><span id="step-label-ops">Étape 1 / 4</span><span id="step-name-ops">Identité</span></div>
+    </div>
+  </div>
+
+  <div class="steps-wrap">
+
+    <!-- STEP O1 -->
+    <div class="step active" id="o-step-1">
+      <div class="step-num">01</div>
+      <h2>Identité de l'employé</h2>
+      <span class="q-mapping">Equipe.Prénom · Equipe.Nom de famille · Equipe.Téléphone · Equipe.Email</span>
+      <div class="field-row" style="margin-top:12px;">
+        <div class="field"><label>Prénom <span class="req">*</span></label><input type="text" id="o-prenom" placeholder="Mohamed"></div>
+        <div class="field"><label>Nom <span class="req">*</span></label><input type="text" id="o-nom" placeholder="Traoré"></div>
+      </div>
+      <div class="field"><label>Adresse complète <span class="req">*</span></label><textarea id="o-adresse" placeholder="15 rue Diderot, 93400 Saint-Ouen"></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Téléphone <span class="req">*</span></label><input type="tel" id="o-tel" placeholder="+33 6 12 34 56 78"></div>
+        <div class="field"><label>Email</label><input type="email" id="o-email" placeholder="m.traore@email.fr"></div>
+      </div>
+      <div class="step-nav">
+        <span></span>
+        <button class="btn-next" onclick="opsNext(1)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP O2 -->
+    <div class="step" id="o-step-2">
+      <div class="step-num">02</div>
+      <h2>Poste & rémunération</h2>
+      <span class="q-mapping">Equipe.Position interne · Equipe.Salaire brut annuel</span>
+      <div class="choices" style="margin-top:12px;">
+        <button class="choice-btn" onclick="selectChoice(this,'ops-poste','Opérationnel')" data-val="Opérationnel">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">🔧 Opérationnel</div><div class="choice-desc">Exécution des travaux sur chantier</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectChoice(this,'ops-poste','Chef de chantier')" data-val="Chef de chantier">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">📋 Chef de chantier</div><div class="choice-desc">Coordination et supervision terrain</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectChoice(this,'ops-poste','Admin')" data-val="Admin">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">📁 Admin</div><div class="choice-desc">Administratif, devis, facturation</div></div>
+        </button>
+      </div>
+      <div class="field-row" style="margin-top:20px;">
+        <div class="field"><label>Salaire brut annuel (€) <span class="req">*</span></label><input type="number" id="o-salaire" placeholder="32000"></div>
+        <div class="field"><label>Date d'entrée <span class="req">*</span></label><input type="date" id="o-date-entree"></div>
+      </div>
+      <div class="step-nav">
+        <button class="btn-prev" onclick="opsGo(1)">← Retour</button>
+        <button class="btn-next" onclick="opsNext(2)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP O3 -->
+    <div class="step" id="o-step-3">
+      <div class="step-num">03</div>
+      <h2>Disponibilités</h2>
+      <span class="q-mapping">Equipe.Absences (structuré)</span>
+      <div class="field" style="margin-top:12px;">
+        <label>Jours travaillés</label>
+        <div class="day-toggles" style="margin-top:8px;">
+          <button class="day-btn" onclick="toggleDay(this,'Lun')">Lun</button>
+          <button class="day-btn on" onclick="toggleDay(this,'Mar')">Mar</button>
+          <button class="day-btn on" onclick="toggleDay(this,'Mer')">Mer</button>
+          <button class="day-btn on" onclick="toggleDay(this,'Jeu')">Jeu</button>
+          <button class="day-btn on" onclick="toggleDay(this,'Ven')">Ven</button>
+          <button class="day-btn" onclick="toggleDay(this,'Sam')">Sam</button>
+          <button class="day-btn" onclick="toggleDay(this,'Dim')">Dim</button>
+        </div>
+      </div>
+      <div class="field" style="margin-top:20px;">
+        <label>Plages horaires</label>
+        <div class="timeslots" style="margin-top:8px;">
+          <button class="slot-btn" onclick="toggleSlot(this,'7h-10h')">7h – 10h</button>
+          <button class="slot-btn on" onclick="toggleSlot(this,'8h-12h')">8h – 12h</button>
+          <button class="slot-btn on" onclick="toggleSlot(this,'12h-14h')">12h – 14h</button>
+          <button class="slot-btn on" onclick="toggleSlot(this,'14h-18h')">14h – 18h</button>
+          <button class="slot-btn" onclick="toggleSlot(this,'18h-20h')">18h – 20h</button>
+          <button class="slot-btn" onclick="toggleSlot(this,'Week-end')">Week-end</button>
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:20px;">
+        <div class="field"><label>Heures / semaine (contrat)</label><input type="number" id="o-heures" placeholder="35"></div>
+        <div class="field">
+          <label>Zone d'intervention max</label>
+          <select id="o-zone">
+            <option value="">— Sélectionner —</option>
+            <option>Paris intramuros</option>
+            <option>Petite couronne 92-93-94</option>
+            <option>Grande couronne IDF</option>
+            <option>National</option>
+          </select>
+        </div>
+      </div>
+      <div class="step-nav">
+        <button class="btn-prev" onclick="opsGo(2)">← Retour</button>
+        <button class="btn-next" onclick="opsNext(3)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP O4 -->
+    <div class="step" id="o-step-4">
+      <div class="step-num">04</div>
+      <h2>Congés & absences</h2>
+      <span class="q-mapping">Equipe.Congés payés acquis · Equipe.Congés payés pris · Equipe.Absences</span>
+      <div class="field-row" style="margin-top:12px;">
+        <div class="field"><label>CP acquis (jours)</label><input type="number" id="o-cp-acquis" placeholder="25"></div>
+        <div class="field"><label>CP déjà pris (jours)</label><input type="number" id="o-cp-pris" placeholder="0"></div>
+      </div>
+      <div class="field">
+        <label>Périodes de congés prévues</label>
+        <div id="periodes-container">
+          <div class="periode-row">
+            <div class="field"><label style="font-size:.75rem;">Du</label><input type="date" class="periode-debut"></div>
+            <div class="field"><label style="font-size:.75rem;">Au</label><input type="date" class="periode-fin"></div>
+            <div></div>
+          </div>
+        </div>
+        <button class="btn-add-periode" onclick="addPeriode()">+ Ajouter une période</button>
+      </div>
+      <div class="field">
+        <label>Contraintes ou restrictions</label>
+        <textarea id="o-contraintes" placeholder="Ex : Ne peut pas travailler en hauteur, allergique à la poussière…"></textarea>
+      </div>
+      <div class="step-nav">
+        <button class="btn-prev" onclick="opsGo(3)">← Retour</button>
+        <button class="btn-next" onclick="submitOps()">Enregistrer l'employé ✓</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS OPS -->
+    <div class="success-screen" id="success-ops">
+      <div class="success-icon"><svg viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+      <h2>Employé enregistré !</h2>
+      <p>La fiche a été créée dans Airtable Equipe.</p>
+      <div class="success-id" id="ops-id-display">EMP-042026-001</div>
+      <p style="font-size:.85rem;color:var(--mist);margin-bottom:28px;">Envoyez "Bonjour" à Emily pour démarrer.</p>
+      <a href="https://wa.me/14155238886?text=Bonjour+Emily" class="success-wa" target="_blank">
+        <svg viewBox="0 0 24 24" fill="white" width="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+        Ouvrir WhatsApp Emily
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TYPEFORM 3 — PROJET
+     ══════════════════════════════════════ -->
+<div class="form-page" id="page-projet">
+  <div class="form-header">
+    <div class="wrap">
+      <div class="form-eyebrow">Nouveau projet</div>
+      <h1>Qualification <em>chantier</em></h1>
+      <p>Couvre 90% des informations nécessaires au devis. Mapping vers Projets + Devis.</p>
+      <div class="progress-bar"><div class="progress-fill" id="prog-projet" style="width:20%"></div></div>
+      <div class="progress-label"><span id="step-label-projet">Étape 1 / 5</span><span id="step-name-projet">Urgence</span></div>
+    </div>
+  </div>
+
+  <div class="steps-wrap">
+
+    <!-- STEP P1 — Urgence -->
+    <div class="step active" id="p-step-1">
+      <div class="step-num">01</div>
+      <h2>Quel est le niveau d'urgence ?</h2>
+      <span class="q-mapping">Projets.Début engagement · Projets.Statut</span>
+      <div class="urgence-choices" style="margin-top:12px;">
+        <div class="urgence-card urgent" onclick="selectUrgence(this,'urgent')">
+          <div class="urgence-icon">🚨</div>
+          <div class="urgence-title">Urgent</div>
+          <div class="urgence-desc">Dégât, panne, sinistre — intervention &lt; 48h</div>
+        </div>
+        <div class="urgence-card" onclick="selectUrgence(this,'semaine')">
+          <div class="urgence-icon">📅</div>
+          <div class="urgence-title">Sous 1 semaine</div>
+          <div class="urgence-desc">Travaux bloquants, contrainte locataire</div>
+        </div>
+        <div class="urgence-card" onclick="selectUrgence(this,'mois')">
+          <div class="urgence-icon">🗓️</div>
+          <div class="urgence-title">1 à 3 mois</div>
+          <div class="urgence-desc">Rénovation planifiée</div>
+        </div>
+        <div class="urgence-card" onclick="selectUrgence(this,'libre')">
+          <div class="urgence-icon">✨</div>
+          <div class="urgence-title">Pas de contrainte</div>
+          <div class="urgence-desc">Projet long terme</div>
+        </div>
+      </div>
+      <div class="alert-urgence" id="alert-urgence">⚡ Intervention urgente — nous vous rappelons sous 2h.</div>
+      <div class="step-nav">
+        <span></span>
+        <button class="btn-next" onclick="projetNext(1)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP P2 — Type chantier -->
+    <div class="step" id="p-step-2">
+      <div class="step-num">02</div>
+      <h2>Type de chantier</h2>
+      <span class="q-mapping">Projets.Description · Benchmark.Type</span>
+      <div class="chantier-grid" style="margin-top:12px;">
+        <div class="chantier-btn" onclick="selectChantier(this,'renovation')">
+          <span class="chantier-icon">🏠</span>
+          <span class="chantier-name">Rénovation complète</span>
+          <span class="chantier-sub">Appartement, maison</span>
+        </div>
+        <div class="chantier-btn" onclick="selectChantier(this,'degats_eau')">
+          <span class="chantier-icon">💧</span>
+          <span class="chantier-name">Dégâts des eaux</span>
+          <span class="chantier-sub">Fuite, infiltration</span>
+        </div>
+        <div class="chantier-btn" onclick="selectChantier(this,'plomberie')">
+          <span class="chantier-icon">🔧</span>
+          <span class="chantier-name">Plomberie</span>
+          <span class="chantier-sub">Sanitaires, réseaux</span>
+        </div>
+        <div class="chantier-btn" onclick="selectChantier(this,'electricite')">
+          <span class="chantier-icon">⚡</span>
+          <span class="chantier-name">Électricité</span>
+          <span class="chantier-sub">Tableau, prises, normes</span>
+        </div>
+        <div class="chantier-btn" onclick="selectChantier(this,'serrurerie')">
+          <span class="chantier-icon">🔑</span>
+          <span class="chantier-name">Serrurerie</span>
+          <span class="chantier-sub">Porte blindée, intrusion</span>
+        </div>
+        <div class="chantier-btn" onclick="selectChantier(this,'peinture')">
+          <span class="chantier-icon">🖌️</span>
+          <span class="chantier-name">Peinture / Revêtement</span>
+          <span class="chantier-sub">Murs, sol, carrelage</span>
+        </div>
+        <div class="chantier-btn" onclick="selectChantier(this,'maconnerie')">
+          <span class="chantier-icon">🧱</span>
+          <span class="chantier-name">Maçonnerie</span>
+          <span class="chantier-sub">Gros œuvre, cloisons</span>
+        </div>
+        <div class="chantier-btn" onclick="selectChantier(this,'menuiserie')">
+          <span class="chantier-icon">🚪</span>
+          <span class="chantier-name">Menuiserie</span>
+          <span class="chantier-sub">Fenêtres, portes, parquet</span>
+        </div>
+        <div class="chantier-btn" onclick="selectChantier(this,'autre')">
+          <span class="chantier-icon">🔩</span>
+          <span class="chantier-name">Autre</span>
+          <span class="chantier-sub">Multi-corps d'état</span>
+        </div>
+      </div>
+      <div class="step-nav">
+        <button class="btn-prev" onclick="projetGo(1)">← Retour</button>
+        <button class="btn-next" onclick="projetNext(2)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP P3 — Localisation -->
+    <div class="step" id="p-step-3">
+      <div class="step-num">03</div>
+      <h2>Localisation & périmètre</h2>
+      <span class="q-mapping">Projets.Adresse · Devis.Surface</span>
+      <div class="field" style="margin-top:12px;">
+        <label>Adresse du chantier <span class="req">*</span></label>
+        <textarea id="p-adresse" placeholder="12 rue de la Paix, Bât B, Appt 34, 75001 Paris"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Surface concernée (m²)</label><input type="number" id="p-surface" placeholder="45"></div>
+        <div class="field">
+          <label>Étage</label>
+          <select id="p-etage">
+            <option value="">— Sélectionner —</option>
+            <option>RDC</option><option>1er</option><option>2ème</option>
+            <option>3ème</option><option>4ème</option><option>5ème et +</option>
+            <option>Dernier étage</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Ascenseur disponible ?</label>
+          <select id="p-ascenseur">
+            <option value="">— Sélectionner —</option>
+            <option>Oui</option><option>Non</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Stationnement</label>
+          <select id="p-parking">
+            <option value="">— Sélectionner —</option>
+            <option>Oui devant</option><option>Zone bleue</option>
+            <option>Payant uniquement</option><option>Difficile</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Contraintes d'accès</label><input type="text" id="p-acces" placeholder="Ex : Code A1234, clé gardienne, chien…"></div>
+      <div class="step-nav">
+        <button class="btn-prev" onclick="projetGo(2)">← Retour</button>
+        <button class="btn-next" onclick="projetNext(3)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP P4 — Détails spécifiques -->
+    <div class="step" id="p-step-4">
+      <div class="step-num">04</div>
+      <h2>Détails <span id="p4-type-label">du chantier</span></h2>
+      <p class="step-hint">Informations spécifiques au type de travaux sélectionné.</p>
+      <span class="q-mapping">Projets.Description · Devis.Heures devis · Devis.Matériaux devis</span>
+
+      <!-- Rénovation complète -->
+      <div class="conditional-bloc" id="bloc-renovation">
+        <div class="field"><label>Pièces concernées</label>
+          <div class="multi-select" style="margin-top:8px;">
+            <button class="ms-btn" onclick="toggleMs(this)">Cuisine</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Salle de bain</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Salon</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Chambres</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Couloir</button>
+            <button class="ms-btn" onclick="toggleMs(this)">WC</button>
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px;"><label>Corps d'état inclus</label>
+          <div class="multi-select" style="margin-top:8px;">
+            <button class="ms-btn" onclick="toggleMs(this)">Plomberie</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Électricité</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Peinture</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Carrelage</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Menuiserie</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Cloisons</button>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:16px;">
+          <div class="field"><label>État actuel</label>
+            <select><option>Habité</option><option>Vide</option><option>En cours de vente</option><option>Location saisonnière</option></select>
+          </div>
+          <div class="field"><label>Fournitures matériaux</label>
+            <select><option>Entreprise fournit tout</option><option>Client fournit tout</option><option>Mixte à définir</option></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dégâts des eaux -->
+      <div class="conditional-bloc" id="bloc-degats_eau">
+        <div class="field"><label>Origine de la fuite</label>
+          <div class="choices cols-2" style="margin-top:8px;">
+            <button class="choice-btn" onclick="selectChoice(this,'fuite','Toit/Terrasse')"><div class="choice-check"></div><div><div class="choice-label">🏠 Toit / Terrasse</div></div></button>
+            <button class="choice-btn" onclick="selectChoice(this,'fuite','Voisin dessus')"><div class="choice-check"></div><div><div class="choice-label">⬆️ Voisin dessus</div></div></button>
+            <button class="choice-btn" onclick="selectChoice(this,'fuite','Canalisation')"><div class="choice-check"></div><div><div class="choice-label">🔧 Canalisation</div></div></button>
+            <button class="choice-btn" onclick="selectChoice(this,'fuite','Inconnue')"><div class="choice-check"></div><div><div class="choice-label">❓ Inconnue</div></div></button>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:16px;">
+          <div class="field"><label>Sinistre déclaré assurance ?</label><select><option>Non</option><option>Oui en cours</option><option>Oui expertise faite</option></select></div>
+          <div class="field"><label>Présence de moisissures ?</label><select><option>Non visible</option><option>Légères</option><option>Importantes</option></select></div>
+        </div>
+        <div class="field"><label>Surfaces touchées</label><input type="text" placeholder="Ex : Plafond salon + mur chambre"></div>
+        <div class="field"><label>Matériaux dégradés</label>
+          <div class="multi-select" style="margin-top:8px;">
+            <button class="ms-btn" onclick="toggleMs(this)">Plâtre / BA13</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Parquet</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Carrelage</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Peinture</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plomberie -->
+      <div class="conditional-bloc" id="bloc-plomberie">
+        <div class="field"><label>Nature de l'intervention</label>
+          <div class="multi-select" style="margin-top:8px;">
+            <button class="ms-btn" onclick="toggleMs(this)">Robinetterie</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Chauffe-eau</button>
+            <button class="ms-btn" onclick="toggleMs(this)">WC / Chasse</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Refonte réseau</button>
+            <button class="ms-btn" onclick="toggleMs(this)">SDB complète</button>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:16px;">
+          <div class="field"><label>Fuite active en ce moment ?</label><select><option>Non</option><option>Oui — coupée</option><option>Oui — en cours</option></select></div>
+          <div class="field"><label>Type de tuyaux</label><select><option>Inconnu</option><option>Cuivre</option><option>PER</option><option>PVC</option><option>Plomb (ancien)</option></select></div>
+        </div>
+      </div>
+
+      <!-- Électricité -->
+      <div class="conditional-bloc" id="bloc-electricite">
+        <div class="field"><label>Nature de l'intervention</label>
+          <div class="multi-select" style="margin-top:8px;">
+            <button class="ms-btn" onclick="toggleMs(this)">Tableau électrique</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Prises / Interrupteurs</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Mise aux normes NF C 15-100</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Domotique</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Éclairage</button>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:16px;">
+          <div class="field"><label>Diagnostic électrique existant ?</label><select><option>Non</option><option>Oui — récent</option><option>Oui — plus de 3 ans</option></select></div>
+          <div class="field"><label>Puissance compteur</label><select><option>Inconnu</option><option>6 kVA</option><option>9 kVA</option><option>12 kVA</option><option>15 kVA +</option></select></div>
+        </div>
+      </div>
+
+      <!-- Serrurerie -->
+      <div class="conditional-bloc" id="bloc-serrurerie">
+        <div class="field"><label>Type d'intervention</label>
+          <div class="choices cols-2" style="margin-top:8px;">
+            <button class="choice-btn" onclick="selectChoice(this,'serr','Ouverture urgence')"><div class="choice-check"></div><div><div class="choice-label">🆘 Ouverture urgence</div></div></button>
+            <button class="choice-btn" onclick="selectChoice(this,'serr','Remplacement cylindre')"><div class="choice-check"></div><div><div class="choice-label">🔐 Remplacement cylindre</div></div></button>
+            <button class="choice-btn" onclick="selectChoice(this,'serr','Porte blindée')"><div class="choice-check"></div><div><div class="choice-label">🚪 Porte blindée</div></div></button>
+            <button class="choice-btn" onclick="selectChoice(this,'serr','Ferme-porte/Digicode')"><div class="choice-check"></div><div><div class="choice-label">📟 Ferme-porte / Digicode</div></div></button>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:16px;">
+          <div class="field"><label>Type de porte actuelle</label><select><option>Bois standard</option><option>Blindée existante</option><option>Métal</option><option>PVC</option></select></div>
+          <div class="field"><label>Effraction / sinistre ?</label><select><option>Non</option><option>Tentative d'effraction</option><option>Effraction réussie</option></select></div>
+        </div>
+        <div class="field"><label>Marque de serrure</label><input type="text" placeholder="Ex : Bricard, Vachette, Mul-T-Lock"></div>
+      </div>
+
+      <!-- Peinture -->
+      <div class="conditional-bloc" id="bloc-peinture">
+        <div class="field"><label>Supports concernés</label>
+          <div class="multi-select" style="margin-top:8px;">
+            <button class="ms-btn" onclick="toggleMs(this)">Murs</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Plafonds</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Carrelage sol</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Parquet</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Façade</button>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:16px;">
+          <div class="field"><label>État des surfaces</label><select><option>Bon état — juste repeindre</option><option>Fissures légères</option><option>Fissures importantes</option><option>Humidité / taches</option></select></div>
+          <div class="field"><label>Peinture fournie par</label><select><option>Entreprise</option><option>Client</option></select></div>
+        </div>
+      </div>
+
+      <!-- Maçonnerie -->
+      <div class="conditional-bloc" id="bloc-maconnerie">
+        <div class="field"><label>Nature des travaux</label>
+          <div class="multi-select" style="margin-top:8px;">
+            <button class="ms-btn" onclick="toggleMs(this)">Démolition cloison</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Création cloison</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Reprise fissures</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Chape / Sol</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Extension</button>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:16px;">
+          <div class="field"><label>Mur porteur ?</label><select><option>Non</option><option>Oui — bureau d'études nécessaire</option><option>À vérifier</option></select></div>
+          <div class="field"><label>Évacuation gravats</label><select><option>À prévoir — inclure au devis</option><option>Client s'en charge</option></select></div>
+        </div>
+      </div>
+
+      <!-- Menuiserie -->
+      <div class="conditional-bloc" id="bloc-menuiserie">
+        <div class="field"><label>Type d'ouvrant</label>
+          <div class="multi-select" style="margin-top:8px;">
+            <button class="ms-btn" onclick="toggleMs(this)">Fenêtres</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Porte d'entrée</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Portes intérieures</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Parquet</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Placard</button>
+            <button class="ms-btn" onclick="toggleMs(this)">Cuisine équipée</button>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:16px;">
+          <div class="field"><label>Matériau souhaité</label><select><option>PVC</option><option>Aluminium</option><option>Bois</option><option>Au choix / conseil</option></select></div>
+          <div class="field"><label>Vitrage</label><select><option>Double vitrage standard</option><option>Triple vitrage</option><option>Phonique</option><option>Non concerné</option></select></div>
+        </div>
+      </div>
+
+      <!-- Autre -->
+      <div class="conditional-bloc" id="bloc-autre">
+        <div class="field"><label>Description libre <span class="req">*</span></label><textarea id="p-autre-desc" placeholder="Décrivez les travaux en détail…" style="min-height:120px;"></textarea></div>
+        <div class="field-row">
+          <div class="field"><label>Corps d'état principaux</label><input type="text" placeholder="Ex : Plomberie + électricité"></div>
+          <div class="field"><label>Nombre d'artisans estimé</label><select><option>1</option><option>2 – 3</option><option>3+</option><option>À définir</option></select></div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-prev" onclick="projetGo(3)">← Retour</button>
+        <button class="btn-next" onclick="projetNext(4)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP P5 — Budget + Client -->
+    <div class="step" id="p-step-5">
+      <div class="step-num">05</div>
+      <h2>Budget, calendrier & client</h2>
+      <span class="q-mapping">Projets.CA attendu · Projets.Début engagement · Projets.Client_ID · Projets.Chef_chantier_ID</span>
+      <div class="field-row" style="margin-top:12px;">
+        <div class="field">
+          <label>Budget estimé</label>
+          <select id="p-budget">
+            <option value="">— Sélectionner —</option>
+            <option>Moins de 2 000 €</option>
+            <option>2 000 – 5 000 €</option>
+            <option>5 000 – 15 000 €</option>
+            <option>15 000 – 30 000 €</option>
+            <option>30 000 – 60 000 €</option>
+            <option>Plus de 60 000 €</option>
+            <option>Devis libre</option>
+          </select>
+        </div>
+        <div class="field"><label>Début souhaité</label><input type="date" id="p-debut"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Client_ID ou dénomination</label><input type="text" id="p-client" placeholder="CLI-042026-007 ou Dupont Jean"></div>
+        <div class="field"><label>Chef de chantier pressenti</label><input type="text" id="p-chef" placeholder="EMP-042026-003 ou Prénom Nom"></div>
+      </div>
+      <div class="field">
+        <label>Fournitures matériaux</label>
+        <div class="choices cols-2" style="margin-top:8px;">
+          <button class="choice-btn" onclick="selectChoice(this,'materiaux','Entreprise')"><div class="choice-check"></div><div><div class="choice-label">Entreprise fournit tout</div></div></button>
+          <button class="choice-btn" onclick="selectChoice(this,'materiaux','Client')"><div class="choice-check"></div><div><div class="choice-label">Client fournit tout</div></div></button>
+          <button class="choice-btn" onclick="selectChoice(this,'materiaux','Mixte')"><div class="choice-check"></div><div><div class="choice-label">Mixte</div></div></button>
+          <button class="choice-btn" onclick="selectChoice(this,'materiaux','À définir')"><div class="choice-check"></div><div><div class="choice-label">À définir</div></div></button>
+        </div>
+      </div>
+      <div class="field" style="margin-top:8px;"><label>Notes libres</label><textarea id="p-notes" placeholder="Toute information utile pour le devis…"></textarea></div>
+      <div class="step-nav">
+        <button class="btn-prev" onclick="projetGo(4)">← Retour</button>
+        <button class="btn-next" onclick="submitProjet()">Enregistrer le projet ✓</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS PROJET -->
+    <div class="success-screen" id="success-projet">
+      <div class="success-icon"><svg viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+      <h2>Projet enregistré !</h2>
+      <p>La fiche projet et le devis ont été créés dans Airtable.</p>
+      <div class="success-id" id="projet-id-display">PRJ-042026-001</div>
+      <p style="font-size:.85rem;color:var(--mist);margin-bottom:28px;">Emily va générer le devis sous 2 minutes.</p>
+      <a href="https://wa.me/14155238886?text=Bonjour+Emily" class="success-wa" target="_blank">
+        <svg viewBox="0 0 24 24" fill="white" width="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+        Suivre sur WhatsApp
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ══ STATE ══ */
+const state = {
+  'client-type': null,
+  'ops-poste': null,
+  'proj-urgence': null,
+  'type-chantier': null,
+  'fuite': null, 'serr': null, 'materiaux': null,
+  selectedDays: new Set(['Mar','Mer','Jeu','Ven']),
+  selectedSlots: new Set(['8h-12h','12h-14h','14h-18h']),
+};
+
+let clientStep = 1;
+let opsStep = 1;
+let projetStep = 1;
+
+/* ══ TABS ══ */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('page-' + tab).classList.add('active');
+}
+
+/* ══ CHOICE SINGLE ══ */
+function selectChoice(btn, key, val) {
+  const parent = btn.closest('.choices') || btn.closest('.urgence-choices') || btn.closest('.field');
+  parent.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state[key] = val;
+
+  if (key === 'client-type') {
+    document.getElementById('bloc-particulier').style.display = val === 'Particulier' ? 'block' : 'none';
+    document.getElementById('bloc-entreprise').style.display = val !== 'Particulier' ? 'block' : 'none';
+    if (val === 'Collectivité') document.getElementById('bloc-fiscal').style.display = 'none';
+    else document.getElementById('bloc-fiscal').style.display = 'block';
+  }
+}
+
+/* ══ URGENCE ══ */
+function selectUrgence(card, val) {
+  document.querySelectorAll('.urgence-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state['proj-urgence'] = val;
+  document.getElementById('alert-urgence').classList.toggle('show', val === 'urgent');
+}
+
+/* ══ CHANTIER ══ */
+function selectChantier(btn, val) {
+  document.querySelectorAll('.chantier-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state['type-chantier'] = val;
+}
+
+/* ══ TOGGLES ══ */
+function toggleDay(btn, day) {
+  btn.classList.toggle('on');
+  if (btn.classList.contains('on')) state.selectedDays.add(day);
+  else state.selectedDays.delete(day);
+}
+function toggleSlot(btn, slot) {
+  btn.classList.toggle('on');
+  if (btn.classList.contains('on')) state.selectedSlots.add(slot);
+  else state.selectedSlots.delete(slot);
+}
+function toggleMs(btn) { btn.classList.toggle('on'); }
+
+/* ══ ADD PÉRIODE ══ */
+function addPeriode() {
+  const row = document.createElement('div');
+  row.className = 'periode-row';
+  row.innerHTML = `<div class="field"><label style="font-size:.75rem;">Du</label><input type="date" class="periode-debut"></div><div class="field"><label style="font-size:.75rem;">Au</label><input type="date" class="periode-fin"></div><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--mist);cursor:pointer;font-size:1.2rem;margin-bottom:4px;">✕</button>`;
+  document.getElementById('periodes-container').appendChild(row);
+}
+
+/* ══ ID GENERATOR ══ */
+function generateId(prefix) {
+  const now = new Date();
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const yyyy = now.getFullYear();
+  const seq = String(Math.floor(Math.random()*900)+100);
+  return `${prefix}-${mm}${yyyy}-${seq}`;
+}
+
+/* ══ PROGRESS ══ */
+function updateProgress(form, step, max, names) {
+  const pct = (step/max)*100;
+  document.getElementById('prog-'+form).style.width = pct+'%';
+  document.getElementById('step-label-'+form).textContent = `Étape ${step} / ${max}`;
+  document.getElementById('step-name-'+form).textContent = names[step-1] || '';
+}
+
+/* ══ CLIENT NAV ══ */
+const clientNames = ['Type de client','Identité','Contexte & projet'];
+function clientGo(n) {
+  document.getElementById('c-step-'+clientStep).classList.remove('active');
+  clientStep = n;
+  document.getElementById('c-step-'+clientStep).classList.add('active');
+  updateProgress('client', clientStep, 3, clientNames);
+  window.scrollTo(0,0);
+}
+function clientNext(from) {
+  if (from===1 && !state['client-type']) { alert('Veuillez sélectionner un type de client.'); return; }
+  if (from===2) {
+    const type = state['client-type'];
+    if (type==='Particulier') {
+      if (!document.getElementById('c-prenom').value || !document.getElementById('c-nom').value || !document.getElementById('c-tel-p').value) { alert('Veuillez remplir les champs obligatoires.'); return; }
+    } else {
+      if (!document.getElementById('c-denom').value || !document.getElementById('c-tel-e').value) { alert('Veuillez remplir les champs obligatoires.'); return; }
+    }
+  }
+  clientGo(from+1);
+}
+function submitClient() {
+  const id = generateId('CLI');
+  const payload = {
+    table:'Prospects',
+    fields:{
+      Client_ID: id,
+      Type: state['client-type'],
+      Dénomination: state['client-type']==='Particulier'
+        ? (document.getElementById('c-prenom').value+' '+document.getElementById('c-nom').value).trim()
+        : document.getElementById('c-denom').value,
+      Téléphone: state['client-type']==='Particulier' ? document.getElementById('c-tel-p').value : document.getElementById('c-tel-e').value,
+      Email: state['client-type']==='Particulier' ? document.getElementById('c-email-p').value : document.getElementById('c-email-e').value,
+      'Date premier contact': new Date().toISOString().slice(0,10),
+      Notes_Emily: [
+        document.getElementById('c-desc').value,
+        'Budget: '+document.getElementById('c-budget').value,
+        'Délai: '+document.getElementById('c-delai').value,
+        'Source: '+document.getElementById('c-source').value,
+      ].filter(Boolean).join(' | ')
+    }
+  };
+  console.log('POST /api/create → Prospects', payload);
+  // TODO: fetch('/api/create', {method:'POST', body: JSON.stringify(payload)})
+  document.getElementById('c-step-3').classList.remove('active');
+  document.getElementById('client-id-display').textContent = id;
+  document.getElementById('success-client').classList.add('show');
+  document.getElementById('prog-client').style.width = '100%';
+  window.scrollTo(0,0);
+}
+
+/* ══ OPS NAV ══ */
+const opsNames = ['Identité','Poste & rémunération','Disponibilités','Congés & absences'];
+function opsGo(n) {
+  document.getElementById('o-step-'+opsStep).classList.remove('active');
+  opsStep = n;
+  document.getElementById('o-step-'+opsStep).classList.add('active');
+  updateProgress('ops', opsStep, 4, opsNames);
+  window.scrollTo(0,0);
+}
+function opsNext(from) {
+  if (from===1 && (!document.getElementById('o-prenom').value || !document.getElementById('o-tel').value)) { alert('Veuillez remplir les champs obligatoires.'); return; }
+  if (from===2 && (!state['ops-poste'] || !document.getElementById('o-salaire').value)) { alert('Veuillez sélectionner un poste et renseigner le salaire.'); return; }
+  opsGo(from+1);
+}
+function submitOps() {
+  const id = generateId('EMP');
+  const salaire = parseFloat(document.getElementById('o-salaire').value)||0;
+  const payload = {
+    table:'Equipe',
+    fields:{
+      Employe_ID: id,
+      Prénom: document.getElementById('o-prenom').value,
+      'Nom de famille': document.getElementById('o-nom').value,
+      Téléphone: document.getElementById('o-tel').value,
+      Email: document.getElementById('o-email').value,
+      'Position interne': state['ops-poste'],
+      'Salaire brut annuel': salaire,
+      'Salaire jour': +(salaire/218).toFixed(2),
+      'Salaire horaire': +(salaire/218/8).toFixed(2),
+      Absences: [
+        'Jours: '+[...state.selectedDays].join(', '),
+        'Plages: '+[...state.selectedSlots].join(', '),
+        'Zone: '+document.getElementById('o-zone').value,
+        document.getElementById('o-contraintes').value,
+      ].filter(Boolean).join(' | '),
+      'Congés payés acquis': parseInt(document.getElementById('o-cp-acquis').value)||0,
+      'Congés payés pris': parseInt(document.getElementById('o-cp-pris').value)||0,
+      Statut:'Actif',
+    }
+  };
+  console.log('POST /api/create → Equipe', payload);
+  document.getElementById('o-step-4').classList.remove('active');
+  document.getElementById('ops-id-display').textContent = id;
+  document.getElementById('success-ops').classList.add('show');
+  document.getElementById('prog-ops').style.width = '100%';
+  window.scrollTo(0,0);
+}
+
+/* ══ PROJET NAV ══ */
+const projetNames = ['Urgence','Type de chantier','Localisation','Détails','Budget & client'];
+function projetGo(n) {
+  document.getElementById('p-step-'+projetStep).classList.remove('active');
+  projetStep = n;
+  document.getElementById('p-step-'+projetStep).classList.add('active');
+  updateProgress('projet', projetStep, 5, projetNames);
+  window.scrollTo(0,0);
+}
+function projetNext(from) {
+  if (from===1 && !state['proj-urgence']) { alert('Veuillez sélectionner un niveau d\'urgence.'); return; }
+  if (from===2) {
+    if (!state['type-chantier']) { alert('Veuillez sélectionner un type de chantier.'); return; }
+    // show correct conditional bloc
+    document.querySelectorAll('.conditional-bloc').forEach(b => b.classList.remove('show'));
+    const bloc = document.getElementById('bloc-'+state['type-chantier']);
+    if (bloc) bloc.classList.add('show');
+    const labels = {renovation:'Rénovation complète',degats_eau:'Dégâts des eaux',plomberie:'Plomberie',electricite:'Électricité',serrurerie:'Serrurerie',peinture:'Peinture / Revêtement',maconnerie:'Maçonnerie',menuiserie:'Menuiserie',autre:'Autre'};
+    document.getElementById('p4-type-label').textContent = labels[state['type-chantier']] || 'du chantier';
+  }
+  if (from===3 && !document.getElementById('p-adresse').value) { alert('Veuillez renseigner l\'adresse du chantier.'); return; }
+  projetGo(from+1);
+}
+function submitProjet() {
+  const prjId = generateId('PRJ');
+  const devId = generateId('DEV');
+  const payload = {
+    projet:{
+      table:'Projets',
+      fields:{
+        Projet_ID: prjId,
+        Client_ID: document.getElementById('p-client').value,
+        Chef_chantier_ID: document.getElementById('p-chef').value,
+        Description: '['+state['type-chantier']+'] '+document.getElementById('p-notes').value,
+        Statut:'A débuter',
+        Adresse: document.getElementById('p-adresse').value,
+        'Avancement estimé':0,
+        'Début engagement': document.getElementById('p-debut').value || new Date().toISOString().slice(0,10),
+      }
+    },
+    devis:{
+      table:'Devis',
+      fields:{
+        Devis_ID: devId,
+        Projet_ID: prjId,
+        Surface: parseInt(document.getElementById('p-surface').value)||0,
+        Statut:'A générer',
+        '# de relances':0,
+        Adresse: document.getElementById('p-adresse').value,
+      }
+    }
+  };
+  console.log('POST /api/create → Projets + Devis', payload);
+  document.getElementById('p-step-5').classList.remove('active');
+  document.getElementById('projet-id-display').textContent = prjId;
+  document.getElementById('success-projet').classList.add('show');
+  document.getElementById('prog-projet').style.width = '100%';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
