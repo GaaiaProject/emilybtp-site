@@ -1,0 +1,19 @@
+<!-- pages/login.html -->
+<form id="loginForm">
+  <input type="password" id="pwd" placeholder="Accès Emily (envoyé par email)">
+  <button>Entrer</button>
+</form>
+<script>
+if(localStorage.getItem('emily_access') !== 'ok') {
+  document.body.innerHTML = document.getElementById('loginForm').outerHTML;
+} else {
+  window.location.href = '/typeforms.html'; // khant_typeforms.html
+}
+document.getElementById('loginForm').onsubmit = e => {
+  e.preventDefault();
+  if(document.getElementById('pwd').value === 'EMILY2026BTP') { // Changez mot de passe
+    localStorage.setItem('emily_access', 'ok');
+    window.location.href = '/typeforms.html';
+  }
+};
+</script>
