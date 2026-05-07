@@ -1154,6 +1154,64 @@ footer {
   padding: 0 4px;
 }
 
+/* ── Name row ── */
+.wa-name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.wa-name-input {
+  width: 100%;
+  border: 1.5px solid #d1d7db;
+  border-radius: 4px;
+  padding: 10px 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .9rem;
+  color: #1e5a40;
+  background: #fafafa;
+  outline: none;
+  transition: border-color .2s;
+}
+.wa-name-input::placeholder { color: #667781; font-size: .85rem; }
+.wa-name-input:focus { border-color: var(--wa-green); background: #fff; }
+.wa-name-input.error { border-color: #e53935; }
+
+/* ── Calendly link ── */
+.wa-calendly {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 11px;
+  border: 1.5px solid #d1d7db;
+  border-radius: 4px;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #008069;
+  text-decoration: none;
+  transition: all .2s;
+  cursor: pointer;
+}
+.wa-calendly:hover {
+  border-color: var(--wa-green);
+  background: #f0fdf8;
+  color: var(--wa-green);
+}
+.wa-calendly-icon { font-size: .95rem; }
+.wa-divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 12px 0 0;
+  font-size: .72rem; color: #8696A0;
+}
+.wa-divider::before, .wa-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: #d1d7db;
+}
+
 @media (max-width: 400px) {
   #wa-panel { width: calc(100vw - 40px); }
   #wa-fab { right: 16px; bottom: 16px; }
@@ -1704,36 +1762,76 @@ function validateNumber(raw) {
   return digits.length >= 7 && digits.length <= 12;
 }
 
-function submitWa() {
+function generateEnterpriseId() {
+  const now = new Date();
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const yyyy = now.getFullYear();
+  const seq = String(Math.floor(Math.random()*900)+100);
+  return 'ENT-' + mm + yyyy + '-' + seq;
+}
+
+async function submitWa() {
+  const prenom      = document.getElementById('wa-prenom').value.trim();
+  const nom         = document.getElementById('wa-nom').value.trim();
   const countryCode = document.getElementById('wa-country').value;
   const rawNumber   = document.getElementById('wa-number').value.trim();
 
-  if (!validateNumber(rawNumber)) {
-    document.getElementById('wa-number').classList.add('error');
+  // Validation
+  if (!prenom || !nom || !validateNumber(rawNumber)) {
     document.getElementById('wa-error').classList.add('show');
+    if (!prenom) document.getElementById('wa-prenom').classList.add('error');
+    if (!nom)    document.getElementById('wa-nom').classList.add('error');
+    if (!validateNumber(rawNumber)) document.getElementById('wa-number').classList.add('error');
     return;
   }
 
-  const digits = rawNumber.replace(/\D/g, '');
-  const fullNumber = countryCode.replace('+', '') + digits;
+  const digits        = rawNumber.replace(/\D/g, '');
+  const fullNumber    = countryCode.replace('+','') + digits;
   const displayNumber = countryCode + ' ' + rawNumber;
+  const enterpriseId  = generateEnterpriseId();
 
-  // Afficher la bulle "envoyé"
-  document.getElementById('wa-echo-num').textContent = displayNumber;
+  // Bulle "envoyé" dans le chat
+  document.getElementById('wa-echo-num').textContent = prenom + ' ' + nom;
   document.getElementById('wa-echo').style.display = 'block';
 
-  // Construire le lien WhatsApp (vers Emily, avec le numéro de l'utilisateur)
-  const msgText = encodeURIComponent('Bonjour Emily — je veux recevoir la démo. Mon numéro : ' + displayNumber);
-  const waLink = 'https://wa.me/' + EMILY_WA_NUMBER + '?text=' + msgText;
-  document.getElementById('wa-open-link').href = waLink;
-
   // Afficher succès
-  document.getElementById('wa-sent-num').textContent = displayNumber;
+  document.getElementById('wa-sent-name').textContent = prenom + ' ' + nom;
+  document.getElementById('wa-sent-num').textContent = enterpriseId;
   document.getElementById('wa-form-block').style.display = 'none';
   document.getElementById('wa-success').classList.add('show');
 
-  // TODO : POST vers l'API Emily pour logger le lead
-  // fetch('/api/wa-lead', { method:'POST', body: JSON.stringify({ phone: fullNumber }) });
+  // ── POST vers Airtable → table Entreprises ──
+  const AIRTABLE_TOKEN   = 'pataXqhet2XaI8ooZ.dc12c13b49c419cde7457b75a7d32dcbe59342347786285cd83baa8a8d74df5d';
+  const AIRTABLE_BASE_ID = 'appZJbvTdAGFCz1fO';
+  const TABLE            = 'Entreprises';
+
+  const payload = {
+    fields: {
+      'Entreprise_ID':    enterpriseId,
+      'Contact Principal': prenom + ' ' + nom,
+      'Dénomination':     prenom + ' ' + nom,
+      'Adresse':          '',
+    }
+  };
+
+  try {
+    const res = await fetch('https://api.airtable.com/v0/' + AIRTABLE_BASE_ID + '/' + encodeURIComponent(TABLE), {
+      method:  'POST',
+      headers: {
+        'Authorization': 'Bearer ' + AIRTABLE_TOKEN,
+        'Content-Type':  'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (data.id) {
+      console.log('✅ Airtable Entreprises créé :', data.id, enterpriseId);
+    } else {
+      console.error('Airtable error:', data);
+    }
+  } catch(e) {
+    console.error('Fetch error:', e);
+  }
 }
 
 // Fermer en cliquant en dehors du panel
@@ -1777,7 +1875,29 @@ document.addEventListener('click', function(e) {
     </div>
 
     <div class="wa-form" id="wa-form-block">
-      <div class="wa-form-title">Recevoir la d&eacute;mo WhatsApp</div>
+      <div class="wa-form-title">Rejoindre la liste d&apos;attente</div>
+
+      <!-- Prénom + Nom -->
+      <div class="wa-name-row">
+        <input
+          class="wa-name-input"
+          id="wa-prenom"
+          type="text"
+          placeholder="Pr&eacute;nom"
+          autocomplete="given-name"
+          onkeydown="if(event.key==='Enter') submitWa()"
+        >
+        <input
+          class="wa-name-input"
+          id="wa-nom"
+          type="text"
+          placeholder="Nom"
+          autocomplete="family-name"
+          onkeydown="if(event.key==='Enter') submitWa()"
+        >
+      </div>
+
+      <!-- Téléphone -->
       <div class="wa-phone-row">
         <select class="wa-flag-select" id="wa-country" onchange="updatePlaceholder()">
           <option value="+33" data-placeholder="6 12 34 56 78" selected>&#127467;&#127479; +33</option>
@@ -1801,25 +1921,38 @@ document.addEventListener('click', function(e) {
           onkeydown="if(event.key==='Enter') submitWa()"
         >
       </div>
-      <div class="wa-error-msg" id="wa-error">Num&eacute;ro invalide &mdash; v&eacute;rifiez le format.</div>
+
+      <div class="wa-error-msg" id="wa-error">Veuillez remplir tous les champs.</div>
+
+      <!-- CTA principal -->
       <button class="wa-submit" onclick="submitWa()">
-        <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M5.339 15.342l-.4 1.442c-.1.37-.187.725-.261 1.078a9.963 9.963 0 01-2.453-6.562C2.225 5.866 6.64 1.5 12.1 1.5c2.67 0 5.175 1.037 7.063 2.919A9.88 9.88 0 0122 11.3c0 5.46-4.415 9.826-9.9 9.826a9.943 9.943 0 01-4.762-1.207l-5.224 1.367 1.225-4.944zm.73-.474l-.806 3.252 3.327-.872.3.178a8.301 8.301 0 004.01 1.034c4.586 0 8.316-3.698 8.316-8.26 0-2.207-.864-4.282-2.435-5.845A8.366 8.366 0 0012.1 3.14c-4.586 0-8.316 3.699-8.316 8.26 0 1.64.478 3.225 1.38 4.582l.19.29-.185.596z"/></svg>
-        Recevoir la d&eacute;mo sur WhatsApp
+        <svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+        Rejoindre la liste d&apos;attente
       </button>
-      <p class="wa-gdpr">En soumettant, vous acceptez d&apos;&ecirc;tre contact&eacute; via WhatsApp. Conforme RGPD &mdash; aucune donn&eacute;e vendue.</p>
+
+      <!-- Divider -->
+      <div class="wa-divider">ou</div>
+
+      <!-- Calendly -->
+      <a href="https://calendly.com/adama_beye/30min" target="_blank" rel="noopener" class="wa-calendly">
+        <span class="wa-calendly-icon">📅</span>
+        R&eacute;server 30 min de d&eacute;mo
+      </a>
+
+      <p class="wa-gdpr">Conforme RGPD &mdash; vos donn&eacute;es ne sont jamais vendues.</p>
     </div>
 
     <div class="wa-success" id="wa-success">
       <div class="wa-success-icon">
         <svg viewBox="0 0 24 24" fill="white" width="26"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
       </div>
-      <h4>Message envoy&eacute;&nbsp;!</h4>
-      <p>Emily vous a envoy&eacute; un message sur</p>
+      <h4>Vous &ecirc;tes sur la liste&nbsp;!</h4>
+      <p>Bienvenue <strong id="wa-sent-name"></strong>&nbsp;&mdash; votre place est r&eacute;serv&eacute;e.</p>
       <span class="wa-number-display" id="wa-sent-num"></span>
-      <p>V&eacute;rifiez WhatsApp sous 30&nbsp;secondes.</p>
-      <a href="#" class="wa-success-link" id="wa-open-link" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="white" width="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
-        Ouvrir dans WhatsApp
+      <p>Nous vous contacterons en priorit&eacute; d&egrave;s l&apos;ouverture.</p>
+      <a href="https://calendly.com/adama_beye/30min" class="wa-success-link" target="_blank" rel="noopener">
+        <span>📅</span>
+        R&eacute;server votre d&eacute;mo de 30 min
       </a>
     </div>
   </div>
