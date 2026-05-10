@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emily BTP — Bienvenue !</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:     #00A884;
+  --green-dk:  #008f70;
+  --green-lt:  #e8f7f2;
+  --green-mid: #00cf9d;
+  --ink:       #1e5a40;
+  --paper:     #f4fbf8;
+  --sand:      #d6ede6;
+  --mist:      #4a7a6a;
+  --white:     #ffffff;
+  --radius:    4px;
+  --error:     #e53935;
+  --max:       680px;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── CONFIRMATION BANNER ── */
+.confirm-banner {
+  background: var(--green);
+  padding: 0;
+  overflow: hidden;
+  animation: banner-in .6s ease both;
+}
+@keyframes banner-in {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.confirm-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 32px 24px 40px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+.confirm-check {
+  width: 52px; height: 52px;
+  background: rgba(255,255,255,.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  animation: pop .5s .3s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes pop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.confirm-check svg { width: 26px; }
+.confirm-text { flex: 1; }
+.confirm-eyebrow {
+  font-size: .75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .13em;
+  color: rgba(255,255,255,.65);
+  margin-bottom: 6px;
+}
+.confirm-text h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.confirm-text h1 em { font-style: italic; color: rgba(255,255,255,.8); }
+.confirm-text p {
+  font-size: .95rem;
+  color: rgba(255,255,255,.75);
+  max-width: 440px;
+}
+.plan-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: .78rem; font-weight: 600;
+  color: var(--white);
+  margin-top: 10px;
+}
+
+/* ── STEPS INDICATOR ── */
+.steps-indicator {
+  background: var(--white);
+  border-bottom: 1px solid var(--sand);
+  padding: 16px 24px;
+}
+.steps-indicator-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.si-step {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .78rem; font-weight: 600;
+  color: var(--mist);
+}
+.si-step.active { color: var(--green); }
+.si-step.done { color: var(--green); opacity: .6; }
+.si-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid var(--sand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .72rem; font-weight: 700;
+  background: var(--white);
+  color: var(--mist);
+  flex-shrink: 0;
+}
+.si-step.active .si-num {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--white);
+}
+.si-step.done .si-num {
+  background: var(--green-lt);
+  border-color: var(--green);
+  color: var(--green);
+}
+.si-line {
+  flex: 1; height: 1px;
+  background: var(--sand);
+  margin: 0 8px;
+}
+.si-label { display: none; }
+@media (min-width: 480px) { .si-label { display: inline; } }
+
+/* ── PROGRESS ── */
+.progress-wrap {
+  background: var(--green);
+  height: 3px;
+}
+.progress-fill {
+  height: 100%;
+  background: rgba(255,255,255,.5);
+  transition: width .4s ease;
+}
+
+/* ── FORM CONTAINER ── */
+.form-wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* ── STEP ── */
+.step { display: none; padding-top: 40px; }
+.step.active {
+  display: block;
+  animation: step-in .35s ease both;
+}
+@keyframes step-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.step-num-label {
+  font-size: .75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .13em;
+  color: var(--green); margin-bottom: 10px;
+}
+.step h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  margin-bottom: 6px; line-height: 1.15;
+}
+.step-hint { font-size: .88rem; color: var(--mist); margin-bottom: 28px; }
+.q-mapping {
+  display: inline-block;
+  font-size: .72rem; color: var(--mist);
+  background: var(--sand);
+  border-radius: 2px; padding: 2px 7px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: .02em; margin-bottom: 20px;
+}
+
+/* ── FIELDS ── */
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+.field label {
+  font-size: .82rem; font-weight: 600;
+  color: var(--ink); letter-spacing: .01em;
+}
+.field label .req { color: var(--green); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 540px) {
+  .field-row, .field-row.cols-3 { grid-template-columns: 1fr; }
+}
+
+input[type=text], input[type=email], input[type=tel],
+input[type=number], input[type=date], textarea, select {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .95rem; color: var(--ink);
+  background: var(--white);
+  border: 1.5px solid var(--sand);
+  border-radius: var(--radius);
+  padding: 13px 14px; outline: none;
+  transition: border-color .2s;
+  -webkit-appearance: none;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--green); }
+input.err, select.err { border-color: var(--error); }
+textarea { resize: vertical; min-height: 80px; }
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%234a7a6a'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+.sep {
+  font-size: .75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .12em;
+  color: var(--mist);
+  border-top: 1px solid var(--sand);
+  padding-top: 20px; margin: 8px 0 20px;
+}
+.err-msg {
+  font-size: .76rem; color: var(--error);
+  margin-top: 4px; display: none;
+}
+.err-msg.show { display: block; }
+
+/* ── CHOICE BUTTONS ── */
+.choices { display: flex; flex-direction: column; gap: 10px; }
+.choices.cols-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+@media (max-width: 540px) { .choices.cols-3 { grid-template-columns: 1fr; } }
+.choice-btn {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 16px 18px;
+  border: 1.5px solid var(--sand);
+  border-radius: var(--radius);
+  background: var(--white);
+  cursor: pointer; transition: all .2s; text-align: left;
+}
+.choice-btn:hover { border-color: var(--green); background: var(--green-lt); }
+.choice-btn.selected { border-color: var(--green); background: var(--green-lt); }
+.choice-btn.selected .choice-check { background: var(--green); border-color: var(--green); }
+.choice-btn.selected .choice-check::after { opacity: 1; }
+.choice-check {
+  width: 20px; height: 20px;
+  border: 1.5px solid var(--sand);
+  border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+  transition: all .2s; position: relative;
+}
+.choice-check::after {
+  content: ''; position: absolute;
+  top: 3px; left: 3px;
+  width: 12px; height: 12px;
+  border-radius: 50%; background: var(--white);
+  opacity: 0; transition: opacity .2s;
+}
+.choice-label { font-weight: 600; font-size: .9rem; color: var(--ink); }
+.choice-desc { font-size: .8rem; color: var(--mist); margin-top: 2px; }
+
+/* ── UPLOAD ZONE ── */
+.upload-zone {
+  border: 2px dashed var(--sand);
+  border-radius: var(--radius);
+  background: var(--white);
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--green);
+  background: var(--green-lt);
+}
+.upload-zone input[type=file] {
+  position: absolute; inset: 0;
+  opacity: 0; cursor: pointer;
+  width: 100%; height: 100%;
+  border: none; background: none; padding: 0;
+}
+.upload-icon {
+  font-size: 2rem; margin-bottom: 10px; display: block;
+}
+.upload-title {
+  font-weight: 600; font-size: .95rem;
+  color: var(--ink); margin-bottom: 4px;
+}
+.upload-sub {
+  font-size: .8rem; color: var(--mist);
+}
+.upload-cta {
+  display: inline-block; margin-top: 12px;
+  background: var(--green-lt);
+  color: var(--green);
+  border: 1.5px solid var(--sand);
+  border-radius: var(--radius);
+  padding: 8px 18px;
+  font-size: .82rem; font-weight: 600;
+  pointer-events: none;
+}
+
+/* ── FILE LIST ── */
+.file-list {
+  margin-top: 12px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.file-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: var(--white);
+  border: 1px solid var(--sand);
+  border-radius: var(--radius);
+  animation: file-in .2s ease both;
+}
+@keyframes file-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.file-icon { font-size: 1.1rem; flex-shrink: 0; }
+.file-name { flex: 1; font-size: .85rem; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-size { font-size: .75rem; color: var(--mist); flex-shrink: 0; }
+.file-remove {
+  background: none; border: none; cursor: pointer;
+  color: var(--mist); font-size: 1rem;
+  padding: 2px; transition: color .2s; flex-shrink: 0;
+}
+.file-remove:hover { color: var(--error); }
+.file-progress {
+  height: 2px; background: var(--sand);
+  border-radius: 1px; margin-top: 4px;
+  overflow: hidden;
+}
+.file-progress-fill {
+  height: 100%; background: var(--green);
+  border-radius: 1px;
+  animation: progress-fill .8s ease both;
+}
+@keyframes progress-fill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+/* ── UPLOAD HINT ── */
+.upload-hint {
+  font-size: .78rem; color: var(--mist);
+  margin-top: 8px; line-height: 1.5;
+}
+
+/* ── NAV BUTTONS ── */
+.step-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 32px; padding-top: 24px;
+  border-top: 1px solid var(--sand);
+}
+.btn-prev {
+  background: none; border: 1.5px solid var(--sand);
+  border-radius: var(--radius); padding: 13px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .9rem; font-weight: 600;
+  color: var(--mist); cursor: pointer; transition: all .2s;
+}
+.btn-prev:hover { border-color: var(--ink); color: var(--ink); }
+.btn-next {
+  background: var(--green); border: none;
+  border-radius: var(--radius); padding: 14px 32px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .9rem; font-weight: 600;
+  color: var(--white); cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.btn-next:hover { background: var(--green-dk); transform: translateY(-1px); }
+.btn-next:disabled { background: var(--sand); cursor: not-allowed; transform: none; }
+
+/* ── SUCCESS ── */
+.success-screen {
+  display: none; text-align: center;
+  padding: 60px 24px; max-width: var(--max);
+  margin: 0 auto;
+}
+.success-screen.show { display: block; animation: step-in .4s ease both; }
+.success-icon-wrap {
+  width: 72px; height: 72px;
+  background: var(--green);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  animation: pop .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+.success-icon-wrap svg { width: 36px; }
+.success-screen h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem; margin-bottom: 12px;
+}
+.success-screen p { font-size: 1rem; color: var(--mist); line-height: 1.7; margin-bottom: 16px; }
+.success-id {
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem; font-weight: 700;
+  color: var(--green); background: var(--green-lt);
+  padding: 8px 18px; border-radius: var(--radius);
+  margin-bottom: 28px; letter-spacing: .05em;
+}
+.success-actions { display: flex; flex-direction: column; gap: 12px; max-width: 360px; margin: 0 auto; }
+.btn-wa {
+  background: #00A884; color: var(--white);
+  border: none; border-radius: var(--radius);
+  padding: 15px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .95rem; font-weight: 600;
+  cursor: pointer; text-decoration: none;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .2s;
+}
+.btn-wa:hover { background: #008f70; }
+.btn-secondary-link {
+  color: var(--green); text-decoration: none;
+  font-size: .88rem; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 12px;
+  border: 1.5px solid var(--sand);
+  border-radius: var(--radius);
+  transition: all .2s;
+}
+.btn-secondary-link:hover { border-color: var(--green); background: var(--green-lt); }
+</style>
+</head>
+<body>
+
+<!-- ══ CONFIRMATION BANNER ══ -->
+<div class="confirm-banner">
+  <div class="confirm-inner">
+    <div class="confirm-check">
+      <svg viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    </div>
+    <div class="confirm-text">
+      <div class="confirm-eyebrow">Paiement confirmé</div>
+      <h1>Bienvenue dans <em>Emily</em></h1>
+      <p>Votre abonnement est actif. Complétez votre fiche entreprise pour activer Emily sur WhatsApp.</p>
+      <span class="plan-pill" id="plan-name-pill">✓ Plan activé</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STEPS INDICATOR ══ -->
+<div class="steps-indicator">
+  <div class="steps-indicator-inner">
+    <div class="si-step active" id="si-1">
+      <div class="si-num">1</div>
+      <span class="si-label">Entreprise</span>
+    </div>
+    <div class="si-line"></div>
+    <div class="si-step" id="si-2">
+      <div class="si-num">2</div>
+      <span class="si-label">Contacts</span>
+    </div>
+    <div class="si-line"></div>
+    <div class="si-step" id="si-3">
+      <div class="si-num">3</div>
+      <span class="si-label">Fiscal</span>
+    </div>
+    <div class="si-line"></div>
+    <div class="si-step" id="si-4">
+      <div class="si-num">4</div>
+      <span class="si-label">Factures</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROGRESS BAR ══ -->
+<div class="progress-wrap">
+  <div class="progress-fill" id="progress-fill" style="width:25%"></div>
+</div>
+
+<!-- ══ FORM ══ -->
+<div class="form-wrap">
+
+  <!-- STEP 1 — Entreprise -->
+  <div class="step active" id="step-1">
+    <div class="step-num-label">01 — Votre entreprise</div>
+    <h2>Informations de l'entreprise</h2>
+    <p class="step-hint">Ces données servent à configurer Emily et générer vos documents officiels.</p>
+    <span class="q-mapping">Entreprises.Dénomination · Entreprises.Adresse · Entreprises.Entreprise_ID</span>
+
+    <div class="field" style="margin-top:12px;">
+      <label>Dénomination sociale <span class="req">*</span></label>
+      <input type="text" id="e-denom" placeholder="SAS Bâtiment Pro, SARL Dupont Travaux…">
+      <span class="err-msg" id="err-denom">Champ obligatoire</span>
+    </div>
+
+    <div class="field">
+      <label>Type de structure</label>
+      <div class="choices cols-3" style="margin-top:4px;">
+        <button class="choice-btn" onclick="selectChoice(this,'e-type','SARL')">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">SARL</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectChoice(this,'e-type','SAS')">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">SAS</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectChoice(this,'e-type','EI')">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">EI / Auto-entrepreneur</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectChoice(this,'e-type','SCI')">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">SCI</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectChoice(this,'e-type','SA')">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">SA</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectChoice(this,'e-type','Autre')">
+          <div class="choice-check"></div>
+          <div><div class="choice-label">Autre</div></div>
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Adresse du siège social <span class="req">*</span></label>
+      <textarea id="e-adresse" placeholder="16 rue Dora Maar, 93400 Saint-Ouen"></textarea>
+      <span class="err-msg" id="err-adresse">Champ obligatoire</span>
+    </div>
+
+    <div class="step-nav">
+      <span></span>
+      <button class="btn-next" onclick="goNext(1)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 — Contacts -->
+  <div class="step" id="step-2">
+    <div class="step-num-label">02 — Contacts</div>
+    <h2>Qui pilote l'entreprise ?</h2>
+    <p class="step-hint">Emily adressera ses alertes et briefs à ces contacts.</p>
+    <span class="q-mapping">Entreprises.Contact Principal · Entreprises.Second Contact</span>
+
+    <div class="field" style="margin-top:12px;">
+      <label>Contact principal <span class="req">*</span> <span style="font-size:.75rem;font-weight:400;color:var(--mist);">— reçoit les alertes Emily</span></label>
+      <input type="text" id="e-contact1" placeholder="Prénom Nom">
+      <span class="err-msg" id="err-contact1">Champ obligatoire</span>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Téléphone <span class="req">*</span></label>
+        <input type="tel" id="e-tel" placeholder="+33 6 12 34 56 78">
+        <span class="err-msg" id="err-tel">Champ obligatoire</span>
+      </div>
+      <div class="field">
+        <label>Email professionnel <span class="req">*</span></label>
+        <input type="email" id="e-email" placeholder="vous@entreprise.fr">
+        <span class="err-msg" id="err-email">Champ obligatoire</span>
+      </div>
+    </div>
+
+    <div class="sep">Second contact (optionnel)</div>
+
+    <div class="field">
+      <label>Nom du second contact</label>
+      <input type="text" id="e-contact2" placeholder="Prénom Nom — ex : associé, comptable">
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Téléphone</label><input type="tel" id="e-tel2" placeholder="+33 6 xx xx xx xx"></div>
+      <div class="field"><label>Email</label><input type="email" id="e-email2" placeholder="second@entreprise.fr"></div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-prev" onclick="goStep(1)">← Retour</button>
+      <button class="btn-next" onclick="goNext(2)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 — Fiscal -->
+  <div class="step" id="step-3">
+    <div class="step-num-label">03 — Informations fiscales</div>
+    <h2>Données légales & bancaires</h2>
+    <p class="step-hint">Utilisées pour générer vos devis et factures aux normes françaises.</p>
+    <span class="q-mapping">Entreprises.SIRET · Entreprises.IBAN</span>
+
+    <div class="field-row" style="margin-top:12px;">
+      <div class="field">
+        <label>SIRET <span class="req">*</span></label>
+        <input type="text" id="e-siret" placeholder="123 456 789 00019" maxlength="17">
+        <span class="err-msg" id="err-siret">SIRET requis (14 chiffres)</span>
+      </div>
+      <div class="field">
+        <label>N° TVA intracommunautaire</label>
+        <input type="text" id="e-tva" placeholder="FR12345678900">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>N° RCS / SIREN</label>
+      <input type="text" id="e-rcs" placeholder="123 456 789 — Registre du Commerce">
+    </div>
+
+    <div class="field">
+      <label>IBAN <span style="font-size:.75rem;font-weight:400;color:var(--mist);">— pour les mentions sur factures</span></label>
+      <input type="text" id="e-iban" placeholder="FR76 1234 5678 9012 3456 7890 123">
+    </div>
+
+    <div class="field">
+      <label>Secteurs d'activité principaux</label>
+      <div class="choices cols-3" style="margin-top:4px;">
+        <button class="choice-btn" onclick="toggleMultiChoice(this)"><div class="choice-check"></div><div><div class="choice-label">Maçonnerie</div></div></button>
+        <button class="choice-btn" onclick="toggleMultiChoice(this)"><div class="choice-check"></div><div><div class="choice-label">Plomberie</div></div></button>
+        <button class="choice-btn" onclick="toggleMultiChoice(this)"><div class="choice-check"></div><div><div class="choice-label">Électricité</div></div></button>
+        <button class="choice-btn" onclick="toggleMultiChoice(this)"><div class="choice-check"></div><div><div class="choice-label">Peinture</div></div></button>
+        <button class="choice-btn" onclick="toggleMultiChoice(this)"><div class="choice-check"></div><div><div class="choice-label">Menuiserie</div></div></button>
+        <button class="choice-btn" onclick="toggleMultiChoice(this)"><div class="choice-check"></div><div><div class="choice-label">Serrurerie</div></div></button>
+        <button class="choice-btn" onclick="toggleMultiChoice(this)"><div class="choice-check"></div><div><div class="choice-label">Carrelage</div></div></button>
+        <button class="choice-btn" onclick="toggleMultiChoice(this)"><div class="choice-check"></div><div><div class="choice-label">Rénovation</div></div></button>
+        <button class="choice-btn" onclick="toggleMultiChoice(this)"><div class="choice-check"></div><div><div class="choice-label">Gros œuvre</div></div></button>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-prev" onclick="goStep(2)">← Retour</button>
+      <button class="btn-next" onclick="goNext(3)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 — Upload factures -->
+  <div class="step" id="step-4">
+    <div class="step-num-label">04 — Factures existantes</div>
+    <h2>Importez vos factures</h2>
+    <p class="step-hint">Emily analyse vos factures pour calibrer votre scoring financier dès le départ. Cette étape est optionnelle mais recommandée.</p>
+    <span class="q-mapping">Optionnel — enrichit le scoring ARLL</span>
+
+    <!-- Drop zone -->
+    <div class="upload-zone" id="upload-zone"
+      ondragover="handleDragOver(event)"
+      ondragleave="handleDragLeave(event)"
+      ondrop="handleDrop(event)">
+      <input type="file" id="file-input" multiple accept=".pdf,.jpg,.jpeg,.png"
+        onchange="handleFiles(this.files)">
+      <span class="upload-icon">📄</span>
+      <div class="upload-title">Glissez vos factures ici</div>
+      <div class="upload-sub">ou cliquez pour sélectionner</div>
+      <span class="upload-cta">Parcourir les fichiers</span>
+    </div>
+    <p class="upload-hint">Formats acceptés : PDF, JPG, PNG · Taille max : 10 Mo par fichier · Factures clients, fournisseurs, relevés</p>
+
+    <!-- File list -->
+    <div class="file-list" id="file-list"></div>
+
+    <div class="step-nav">
+      <button class="btn-prev" onclick="goStep(3)">← Retour</button>
+      <button class="btn-next" onclick="submitForm()">
+        <svg viewBox="0 0 24 24" fill="white" width="16"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        Activer Emily
+      </button>
+    </div>
+    <p style="text-align:center;font-size:.78rem;color:var(--mist);margin-top:16px;">
+      Vous pouvez passer cette étape — <a href="#" onclick="submitForm()" style="color:var(--green);font-weight:600;">activer Emily sans importer de factures</a>
+    </p>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon-wrap">
+      <svg viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    </div>
+    <h2>Emily est prête !</h2>
+    <p>Votre espace a été configuré. Voici vos identifiants :</p>
+    <div class="success-id" id="success-ent-id">ENT-052026-001</div>
+    <p style="font-size:.85rem;margin-bottom:28px;">
+      Envoyez <strong>"Bonjour"</strong> au numéro ci-dessous sur WhatsApp — Emily vous répondra sous 30 secondes.
+    </p>
+    <div class="success-actions">
+      <a href="https://wa.me/14155238886?text=Bonjour+Emily" class="btn-wa" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="white" width="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+        Ouvrir WhatsApp &amp; dire Bonjour
+      </a>
+      <a href="khant_typeforms.html" class="btn-secondary-link">
+        📋 Ajouter votre équipe &amp; vos projets
+      </a>
+      <a href="https://calendly.com/adama_beye/30min" target="_blank" rel="noopener" class="btn-secondary-link">
+        📅 Réserver une démo guidée
+      </a>
+    </div>
+  </div>
+
+</div><!-- /form-wrap -->
+
+<script>
+/* ══ CONFIG ══ */
+// Tokens are server-side only — see api/create-enterprise.js
+
+/* ══ STATE ══ */
+let currentStep = 1;
+const totalSteps = 4;
+const state = { 'e-type': null, secteurs: [] };
+const uploadedFiles = [];
+
+/* ══ READ STRIPE PARAMS ══ */
+(function readStripeParams() {
+  const params = new URLSearchParams(window.location.search);
+  const plan = params.get('plan') || params.get('session_id') ? 'Plan activé' : 'Plan activé';
+  document.getElementById('plan-name-pill').textContent = '✓ ' + (params.get('plan') || 'Emily Pro');
+})();
+
+/* ══ NAVIGATION ══ */
+function goStep(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  // update indicator
+  document.getElementById('si-' + currentStep).classList.remove('active');
+  document.getElementById('si-' + currentStep).classList.add('done');
+
+  currentStep = n;
+  document.getElementById('step-' + currentStep).classList.add('active');
+  document.getElementById('si-' + currentStep).classList.add('active');
+  document.getElementById('si-' + currentStep).classList.remove('done');
+
+  // progress
+  document.getElementById('progress-fill').style.width = ((currentStep / totalSteps) * 100) + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goNext(from) {
+  // Validation
+  if (from === 1) {
+    const denom = document.getElementById('e-denom').value.trim();
+    const addr  = document.getElementById('e-adresse').value.trim();
+    let ok = true;
+    if (!denom) { document.getElementById('err-denom').classList.add('show'); document.getElementById('e-denom').classList.add('err'); ok = false; }
+    else { document.getElementById('err-denom').classList.remove('show'); document.getElementById('e-denom').classList.remove('err'); }
+    if (!addr)  { document.getElementById('err-adresse').classList.add('show'); ok = false; }
+    else { document.getElementById('err-adresse').classList.remove('show'); }
+    if (!ok) return;
+  }
+  if (from === 2) {
+    const c1    = document.getElementById('e-contact1').value.trim();
+    const tel   = document.getElementById('e-tel').value.trim();
+    const email = document.getElementById('e-email').value.trim();
+    let ok = true;
+    if (!c1)    { document.getElementById('err-contact1').classList.add('show'); ok = false; }
+    else          document.getElementById('err-contact1').classList.remove('show');
+    if (!tel)   { document.getElementById('err-tel').classList.add('show'); ok = false; }
+    else          document.getElementById('err-tel').classList.remove('show');
+    if (!email) { document.getElementById('err-email').classList.add('show'); ok = false; }
+    else          document.getElementById('err-email').classList.remove('show');
+    if (!ok) return;
+  }
+  if (from === 3) {
+    const siret = document.getElementById('e-siret').value.replace(/\s/g,'');
+    if (siret.length > 0 && siret.length !== 14) {
+      document.getElementById('err-siret').classList.add('show');
+      return;
+    }
+    document.getElementById('err-siret').classList.remove('show');
+  }
+  goStep(from + 1);
+}
+
+/* ══ CHOICES ══ */
+function selectChoice(btn, key, val) {
+  btn.closest('.choices').querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state[key] = val;
+}
+function toggleMultiChoice(btn) {
+  btn.classList.toggle('selected');
+  const label = btn.querySelector('.choice-label').textContent;
+  if (btn.classList.contains('selected')) state.secteurs.push(label);
+  else state.secteurs = state.secteurs.filter(s => s !== label);
+}
+
+/* ══ ID GENERATOR ══ */
+function generateId(prefix) {
+  const now = new Date();
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const yyyy = now.getFullYear();
+  const seq = String(Math.floor(Math.random()*900)+100);
+  return prefix + '-' + mm + yyyy + '-' + seq;
+}
+
+/* ══ FILE UPLOAD ══ */
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' o';
+  if (bytes < 1048576) return (bytes/1024).toFixed(0) + ' Ko';
+  return (bytes/1048576).toFixed(1) + ' Mo';
+}
+
+function addFileToList(file) {
+  if (uploadedFiles.some(f => f.name === file.name && f.size === file.size)) return;
+  uploadedFiles.push(file);
+
+  const item = document.createElement('div');
+  item.className = 'file-item';
+  item.dataset.name = file.name;
+
+  const icon = file.type === 'application/pdf' ? '📄' : '🖼️';
+  item.innerHTML = `
+    <span class="file-icon">${icon}</span>
+    <div style="flex:1;min-width:0;">
+      <div class="file-name">${file.name}</div>
+      <div class="file-progress"><div class="file-progress-fill"></div></div>
+    </div>
+    <span class="file-size">${formatSize(file.size)}</span>
+    <button class="file-remove" onclick="removeFile('${file.name}', this.closest('.file-item'))">✕</button>
+  `;
+  document.getElementById('file-list').appendChild(item);
+}
+
+function removeFile(name, el) {
+  const idx = uploadedFiles.findIndex(f => f.name === name);
+  if (idx > -1) uploadedFiles.splice(idx, 1);
+  el.remove();
+}
+
+function handleFiles(files) {
+  Array.from(files).forEach(f => {
+    if (f.size > 10 * 1024 * 1024) { alert(f.name + ' dépasse 10 Mo.'); return; }
+    addFileToList(f);
+  });
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('upload-zone').classList.add('drag-over');
+}
+function handleDragLeave(e) {
+  document.getElementById('upload-zone').classList.remove('drag-over');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-zone').classList.remove('drag-over');
+  handleFiles(e.dataTransfer.files);
+}
+
+/* ══ SUBMIT → AIRTABLE ══ */
+async function submitForm() {
+  const enterpriseId = generateId('ENT');
+
+  // Payload sent via /api/create-enterprise below
+
+  // POST to /api/create-enterprise (token is server-side only)
+  try {
+    const res = await fetch('/api/create-enterprise', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        enterpriseId,
+        denomination: document.getElementById('e-denom').value.trim(),
+        adresse:      document.getElementById('e-adresse').value.trim(),
+        contact1:     document.getElementById('e-contact1').value.trim(),
+        contact2:     document.getElementById('e-contact2').value.trim(),
+        siret:        document.getElementById('e-siret').value.replace(/\s/g,''),
+        iban:         document.getElementById('e-iban').value.trim(),
+        plan:         new URLSearchParams(window.location.search).get('plan') || 'Non spécifié',
+      }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      console.log('✅ Entreprise créée :', data.enterpriseId);
+    } else {
+      console.error('API error:', JSON.stringify(data));
+    }
+  } catch(e) {
+    console.error('Fetch error:', e);
+  }
+
+  // Show success
+  document.getElementById('step-4').classList.remove('active');
+  document.getElementById('success-ent-id').textContent = enterpriseId;
+  document.getElementById('success-screen').classList.add('show');
+  document.getElementById('progress-fill').style.width = '100%';
+
+  // Update all indicators to done
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('si-' + i).classList.remove('active');
+    document.getElementById('si-' + i).classList.add('done');
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

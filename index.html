@@ -1715,19 +1715,13 @@ function switchBilling() {
 
 /* ── Checkout → Stripe (placeholders) ── */
 function goCheckout(plan) {
-  const period = annual ? 'annual' : 'monthly';
-  // TODO : remplacer par les vrais liens Stripe Checkout
   const urls = {
-    'solo-monthly':  '#stripe-solo-monthly',
-    'solo-annual':   '#stripe-solo-annual',
-    'pro-monthly':   '#stripe-pro-monthly',
-    'pro-annual':    '#stripe-pro-annual',
-    'scale-monthly': '#stripe-scale-monthly',
-    'scale-annual':  '#stripe-scale-annual',
+    'solo':       'https://buy.stripe.com/4gM8wI9nc1sB3vT0yD00000',
+    'pro':        'https://buy.stripe.com/cNi8wIfLA9Z75E1ept00001',
+    'scale':      'https://buy.stripe.com/6oU28kfLAgnv4zX95900002',
   };
-  const target = urls[`${plan}-${period}`];
-  // window.location.href = target;
-  alert(`→ Stripe Checkout\nPlan : ${plan} · ${period}\nLien : ${target}\n\nRemplacez cette alerte par vos liens Stripe.`);
+  const target = urls[plan];
+  if (target) window.location.href = target;
 }
 
 /* ══ WIDGET WHATSAPP ══ */
@@ -1786,7 +1780,6 @@ async function submitWa() {
   }
 
   const digits        = rawNumber.replace(/\D/g, '');
-  const fullNumber    = countryCode.replace('+','') + digits;
   const displayNumber = countryCode + ' ' + rawNumber;
   const enterpriseId  = generateEnterpriseId();
 
@@ -1794,43 +1787,27 @@ async function submitWa() {
   document.getElementById('wa-echo-num').textContent = prenom + ' ' + nom;
   document.getElementById('wa-echo').style.display = 'block';
 
-  // Afficher succès
+  // Afficher succès immédiatement
   document.getElementById('wa-sent-name').textContent = prenom + ' ' + nom;
   document.getElementById('wa-sent-num').textContent = enterpriseId;
   document.getElementById('wa-form-block').style.display = 'none';
   document.getElementById('wa-success').classList.add('show');
 
-  // ── POST vers Airtable → table Entreprises ──
-  const AIRTABLE_TOKEN   = 'pataXqhet2XaI8ooZ.dc12c13b49c419cde7457b75a7d32dcbe59342347786285cd83baa8a8d74df5d';
-  const AIRTABLE_BASE_ID = 'appZJbvTdAGFCz1fO';
-  const TABLE            = 'Entreprises';
-
-  const payload = {
-    fields: {
-      'Entreprise_ID':    enterpriseId,
-      'Contact Principal': prenom + ' ' + nom,
-      'Dénomination':     prenom + ' ' + nom,
-      'Adresse':          '',
-    }
-  };
-
+  // ── POST vers /api/waitlist (token sécurisé côté serveur) ──
   try {
-    const res = await fetch('https://api.airtable.com/v0/' + AIRTABLE_BASE_ID + '/' + encodeURIComponent(TABLE), {
+    await fetch('/api/waitlist', {
       method:  'POST',
-      headers: {
-        'Authorization': 'Bearer ' + AIRTABLE_TOKEN,
-        'Content-Type':  'application/json',
-      },
-      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prenom,
+        nom,
+        telephone:   digits,
+        countryCode,
+        enterpriseId,
+      }),
     });
-    const data = await res.json();
-    if (data.id) {
-      console.log('✅ Airtable Entreprises créé :', data.id, enterpriseId);
-    } else {
-      console.error('Airtable error:', data);
-    }
   } catch(e) {
-    console.error('Fetch error:', e);
+    console.error('Waitlist API error:', e);
   }
 }
 
